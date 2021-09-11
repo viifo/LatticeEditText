@@ -1,0 +1,135 @@
+# LatticeEditText
+
+[![](https://jitpack.io/v/viifo/LatticeEditText.svg)](https://jitpack.io/#viifo/LatticeEditText)
+
+[中文](https://github.com/viifo/LatticeEditText/blob/master/README.md) | [English](https://github.com/viifo/LatticeEditText/blob/master/README_en.md)
+
+一个格子输入框，可用于验证码或密码输入。
+
+
+
+## 预览
+| box模式 | line模式 |
+| :--: | :----: |
+| ![](./screenshots/p1.gif) | ![](./screenshots/p2.gif) |
+| **box无边框** | **字符回显** |
+| ![](./screenshots/p3.gif) | ![](./screenshots/p4.gif) |
+
+
+
+## 依赖
+1.  在根目录下的 build.gradle 文件中的 repositories 下添加：
+```groovy
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
+```
+2.  添加依赖
+```groovy
+dependencies {
+    implementation 'com.github.viifo:LatticeEditText:1.0.0'
+}
+```
+
+
+
+## 使用
+1.  在 XML 中添加：
+```xml
+<com.viifo.latticeedittext.LatticeEditText
+        android:id="@+id/et_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="0dp"
+        android:layout_margin="5dp"
+        android:textSize="18sp"
+        android:textColor="#ff0000"
+        app:border_radius="10dp"
+        app:cursor_height="15dp"
+        app:cursor_color="#ff0000"
+        app:size="4"
+        app:input_mode="box"
+        android:background="#ececec"
+        app:border_color="#ff00ff"/>
+```
+2.  文本改变监听：
+```java
+// kotlin
+latticeEditText.textChangeListener = { 
+    println("--> OnTextChangeListener： text = $it")
+}
+// or
+latticeEditText.setOnTextChangeListener {
+    println("--> OnTextChangeListener： text = $it")
+}
+
+// java
+latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
+    @Override
+    public void onTextChange(@Nullable String text) {
+        System.out.println("--> OnTextChangeListener： text = " + text);
+    }
+});
+```
+
+
+
+## 属性表
+
+|             name           |  format   |  description  |
+| :------------------------: | :-------: | :-----------: |
+| android:background         | color     | 背景色         |
+| android:textSize           | dimension | 文字大小       |
+| android:textColor          | color     | 文字颜色       |
+| android:text               | string    | 输入框内容     |
+| android:layout_margin      | dimension | 外边距         |
+| android:layout_marginLeft  | dimension | 左外边距       |
+| android:layout_marginTop   | dimension | 上外边距       |
+| android:layout_marginRight | dimension | 右外边距       |
+| android:layout_marginBottom| dimension | 下外边距       |
+| android:padding            | dimension | 内边距         |
+| android:paddingLeft        | dimension | 左内边距       |
+| android:paddingTop         | dimension | 上内边距       |
+| input_mode                 | enum      | 输入框样式，参考输入框样式表 |
+| size                       | integer   | 输入框个数     |
+| input_width                | dimension | 单个输入框宽度 |
+| input_height               | dimension | 单个输入框高度 |
+| border_radius              | dimension | 边框半径      |
+| border_width               | dimension | 边框宽度      |
+| border_color               | color     | 边框颜色      |
+| cursor_width               | dimension | 光标宽度      |
+| cursor_height              | dimension | 光标高度      |
+| cursor_color               | color     | 光标颜色      |
+| replace_text               | string    | 回显字符      |
+
+
+
+## 输入框样式表
+|   name   |  description  |
+| :------: | :-----------: |
+| box      | 盒子模式       |
+| line     | 下划线模式     |
+
+
+
+## License
+
+```
+Copyright 2021 viifo
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```
+

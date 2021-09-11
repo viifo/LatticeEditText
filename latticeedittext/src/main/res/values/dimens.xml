@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="latticeEditText_dp1">1dp</dimen>
+    <dimen name="latticeEditText_dp2">1dp</dimen>
+    <dimen name="latticeEditText_dp4">4dp</dimen>
+    <dimen name="latticeEditText_dp10">10dp</dimen>
+    <dimen name="latticeEditText_dp36">36dp</dimen>
+    <dimen name="latticeEditText_sp14">14sp</dimen>
+</resources>

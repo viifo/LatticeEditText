@@ -1,0 +1,3 @@
+rootProject.name = "LatticeEditText"
+include ':demo'
+include ':latticeedittext'
