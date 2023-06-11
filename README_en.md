@@ -39,7 +39,7 @@ allprojects {
 2.  Add the dependency:
 ```groovy
 dependencies {
-    implementation 'com.github.viifo:LatticeEditText:1.0.1'
+    implementation 'com.github.viifo:LatticeEditText:1.0.2'
 }
 ```
 
