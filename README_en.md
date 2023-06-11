@@ -8,6 +8,8 @@ A lattice input box can be used for verification code or password input.
 
 
 
+
+
 ## Preview
 
 |           box mode           |         box mode          |
@@ -19,6 +21,8 @@ A lattice input box can be used for verification code or password input.
 |  ![](./screenshots/p5.gif)   | ![](./screenshots/p6.gif) |
 |    **auto switch focus**     |                           |
 |  ![](./screenshots/p7.gif)   |                           |
+
+
 
 
 
@@ -38,6 +42,8 @@ dependencies {
     implementation 'com.github.viifo:LatticeEditText:1.0.1'
 }
 ```
+
+
 
 
 
@@ -82,6 +88,8 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 
 
+
+
 ## Attributes
 
 |            name             |  format   |                           description                            |
@@ -114,6 +122,8 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 
 
+
+
 ## Input mode style
 
 |   name   |  description   |
@@ -123,12 +133,27 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 
 
+
+
 ## Cursor mode style
 
 |   name   |           description            |
 | :------: |:--------------------------------:|
 | box      |             box mode             |
 | line     | underline or vertical line mode  |
+
+
+
+
+
+## Update log
+
+* 1.0.1
+    1. bug fixes
+    2. added cursor mode
+* 1.0.0
+
+
 
 
 

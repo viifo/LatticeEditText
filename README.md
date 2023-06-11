@@ -8,6 +8,8 @@
 
 
 
+
+
 ## 预览
 
 |           box模式           |          box模式        |
@@ -19,6 +21,8 @@
 | ![](./screenshots/p5.gif) | ![](./screenshots/p6.gif) |
 |        **自动切换焦点**         |                       |
 | ![](./screenshots/p7.gif) |                       |
+
+
 
 
 
@@ -38,6 +42,8 @@ dependencies {
     implementation 'com.github.viifo:LatticeEditText:1.0.1'
 }
 ```
+
+
 
 
 
@@ -82,6 +88,8 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 
 
+
+
 ## 属性表
 
 |            name             |  format   |                 description                  |
@@ -115,11 +123,15 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 
 
+
+
 ## 输入框样式表
 |   name   |  description  |
 | :------: | :-----------: |
 | box      | 盒子模式       |
 | line     | 下划线模式     |
+
+
 
 
 
@@ -129,6 +141,15 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 | :------: |:-----------:|
 | box      |    盒子模式     |
 | line     |  下划线或竖线模式   |
+
+
+
+## 更新日志
+
+* 1.0.1
+  1. bug 修复
+  2. 新增光标模式
+* 1.0.0
 
 
 
