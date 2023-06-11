@@ -9,11 +9,16 @@ A lattice input box can be used for verification code or password input.
 
 
 ## Preview
-| box mode | line mode |
-| :--: | :----: |
-| ![](./screenshots/p1.gif) | ![](./screenshots/p2.gif) |
-| **box mode with borderless** | **character echo** |
-| ![](./screenshots/p3.gif) | ![](./screenshots/p4.gif) |
+
+|           box mode           |         box mode          |
+|:----------------------------:|:-------------------------:|
+|  ![](./screenshots/p1.gif)   | ![](./screenshots/p2.gif) |
+| **box mode with borderless** |    **character echo**     |
+|  ![](./screenshots/p3.gif)   | ![](./screenshots/p4.gif) |
+|        **line mode**         |      **line mode**        |
+|  ![](./screenshots/p5.gif)   | ![](./screenshots/p6.gif) |
+|    **auto switch focus**     |                           |
+|  ![](./screenshots/p7.gif)   |                           |
 
 
 
@@ -30,7 +35,7 @@ allprojects {
 2.  Add the dependency:
 ```groovy
 dependencies {
-    implementation 'com.github.viifo:LatticeEditText:1.0.0'
+    implementation 'com.github.viifo:LatticeEditText:1.0.1'
 }
 ```
 
@@ -76,41 +81,54 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 ```
 
 
+
 ## Attributes
 
-|             name           |  format   |  description  |
-| :------------------------: | :-------: | :-----------: |
-| android:background         | color     | background color |
-| android:textSize           | dimension | text size     |
-| android:textColor          | color     | text color    |
-| android:text               | string    | text          |
-| android:layout_margin      | dimension | margin        |
-| android:layout_marginLeft  | dimension | margin left   |
-| android:layout_marginTop   | dimension | margin top    |
-| android:layout_marginRight | dimension | margin right  |
-| android:layout_marginBottom| dimension | margin bottom |
-| android:padding            | dimension | padding       |
-| android:paddingLeft        | dimension | padding left  |
-| android:paddingTop         | dimension | padding top   |
-| input_mode                 | enum      | reference input box style sheet |
-| size                       | integer   | number of input boxes |
-| input_width                | dimension | single input box width |
-| input_height               | dimension | single input box height |
-| border_radius              | dimension | border radius |
-| border_width               | dimension | border width  |
-| border_color               | color     | border color  |
-| cursor_width               | dimension | cursor width      |
-| cursor_height              | dimension | cursor height      |
-| cursor_color               | color     | cursor color      |
-| replace_text               | string    | used to replace input characters |
+|            name             |  format   |                           description                            |
+|:---------------------------:|:---------:|:----------------------------------------------------------------:|
+|     android:background      |   color   |                         background color                         |
+|       android:content       |  string   |                               text                               |
+|    android:layout_margin    | dimension |                              margin                              |
+|  android:layout_marginLeft  | dimension |                           margin left                            |
+|  android:layout_marginTop   | dimension |                            margin top                            |
+| android:layout_marginRight  | dimension |                           margin right                           |
+| android:layout_marginBottom | dimension |                          margin bottom                           |
+|          text_size          | dimension |                            text size                             |
+|         text_color          |   color   |                            text color                            |
+|         input_mode          |   enum    |                 reference input mode style sheet                 |
+|            size             |  integer  |                      number of input boxes                       |
+|         input_width         | dimension |                      single input box width                      |
+|        input_height         | dimension |                     single input box height                      |
+|        border_radius        | dimension |                          border radius                           |
+|        border_width         | dimension |                           border width                           |
+|        border_color         |   color   |                           border color                           |
+|        replace_text         |  string   |                 used to replace input characters                 |
+|         cursor_mode         |   enum    |                reference cursor mode style sheet                 |
+|         show_cursor         |  boolean  |           whether to display the cursor, default: true           |
+|        cursor_width         | dimension |                           cursor width                           |
+|        cursor_height        | dimension |        cursor height, Valid when the cursor mode is line         |
+|        cursor_color         |   color   |                           cursor color                           |
+|      cursor_background      |   color   |                     cursor background color                      |
+|     cursor_orientation      |   enum    | Valid when the cursor mode is line, horizontal - 0, vertical = 1 |
+> Note: When cursor_orientation = horizontal, input_mode = line & cursor_mode = line must be satisfied
+
 
 
 ## Input mode style
+
 |   name   |  description   |
 | :------: | :------------: |
 | box      | box mode       |
 | line     | underline mode |
 
+
+
+## Cursor mode style
+
+|   name   |           description            |
+| :------: |:--------------------------------:|
+| box      |             box mode             |
+| line     | underline or vertical line mode  |
 
 
 

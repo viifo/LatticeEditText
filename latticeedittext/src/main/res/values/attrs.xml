@@ -1,21 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="LatticeEditText">
-        <attr name="android:background" format="color"/>
-        <attr name="android:textSize" format="dimension"/>
-        <attr name="android:textColor" format="color"/>
-        <attr name="android:text" format="string"/>
         <attr name="android:layout_margin" format="dimension"/>
         <attr name="android:layout_marginTop" format="dimension"/>
         <attr name="android:layout_marginLeft" format="dimension"/>
         <attr name="android:layout_marginRight" format="dimension"/>
         <attr name="android:layout_marginBottom" format="dimension"/>
-        <attr name="android:padding" format="dimension"/>
-        <attr name="android:paddingTop" format="dimension"/>
-        <attr name="android:paddingLeft" format="dimension"/>
-        <attr name="android:paddingRight" format="dimension"/>
-        <attr name="android:paddingBottom" format="dimension"/>
 
+        <attr name="android:background" format="color"/>
+        <attr name="android:content" format="string"/>
+        <attr name="text_size" format="dimension"/>
+        <attr name="text_color" format="color"/>
         <attr name="input_mode" format="enum">
             <enum name="box" value="0"/>
             <enum name="line" value="1"/>
@@ -26,9 +21,24 @@
         <attr name="border_radius" format="dimension"/>
         <attr name="border_width" format="dimension"/>
         <attr name="border_color" format="color"/>
-        <attr name="cursor_width" format="dimension"/>
-        <attr name="cursor_height" format="dimension"/>
-        <attr name="cursor_color" format="color"/>
         <attr name="replace_text" format="string"/>
+
+        <!-- 光标模式 -->
+        <attr name="cursor_mode" format="enum">
+            <enum name="box" value="0"/>
+            <enum name="line" value="1"/>
+        </attr>
+        <attr name="cursor_color" format="color"/>
+        <attr name="cursor_background" format="color"/>
+        <attr name="show_cursor" format="boolean"/>
+        <attr name="cursor_width" format="dimension"/>
+        <!-- 光标模式为 line 时有效 -->
+        <attr name="cursor_height" format="dimension"/>
+        <attr name="cursor_orientation" format="enum">
+            <!-- 光标模式为 line 且 input_mode 为 line 时有效 -->
+            <enum name="horizontal" value="0" />
+            <!-- 默认竖线光标 -->
+            <enum name="vertical" value="1" />
+        </attr>
     </declare-styleable>
 </resources>

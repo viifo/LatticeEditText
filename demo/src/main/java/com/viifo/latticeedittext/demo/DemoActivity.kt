@@ -5,6 +5,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import com.viifo.latticeedittext.LatticeEditText
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class DemoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -19,7 +23,7 @@ class DemoActivity : AppCompatActivity() {
             println("--> OnTextChangeListener： text = $it")
         }
         findViewById<Button>(R.id.btn_get).setOnClickListener {
-            findViewById<TextView>(R.id.tv_text).text = latticeEditText.text
+            findViewById<TextView>(R.id.tv_text).text = latticeEditText.content
         }
     }
 }

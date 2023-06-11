@@ -24,7 +24,11 @@ class LatticeEditTextInputConnection (target: InputConnection?, mutable: Boolean
      */
     : InputConnectionWrapper(target, mutable) {
 
-    var onBeforeTextDeletedListener: (()->Unit)? = null
+    /** 软键盘删除按键按下监听 */
+    var onKeyDeletedDownListener: (()->Unit)? = null
+
+    /** 软键盘字母和数字按键抬起监听，除删除按键外的其他软键盘按键抬起时触发 */
+    var onKeyEventUpListener: ((CharSequence?)->Unit)? = null
 
     /**
      * 删除文本之前调用
@@ -33,22 +37,34 @@ class LatticeEditTextInputConnection (target: InputConnection?, mutable: Boolean
      * @return
      */
     override fun deleteSurroundingText(beforeLength: Int, afterLength: Int): Boolean {
-        return onBeforeTextDeletedListener?.let {
+        return onKeyDeletedDownListener?.let {
                 it.invoke()
                 true
             } ?: super.deleteSurroundingText(beforeLength, afterLength)
     }
 
     /**
-     * 点击软键盘按钮调用
+     * 点击软键盘按钮调用，如删除键
      * @param event
      * @return
      */
     override fun sendKeyEvent(event: KeyEvent): Boolean {
         return if (event.keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-            onBeforeTextDeletedListener?.invoke()
+            onKeyDeletedDownListener?.invoke()
             true
         } else super.sendKeyEvent(event)
+    }
+
+    /**
+     * 输入法提交输入文本内容到文本框时调用
+     * @param text - 提交的文本内容
+     * @param newCursorPosition - 新的光标位置
+     */
+    override fun commitText(text: CharSequence?, newCursorPosition: Int): Boolean {
+        // return super.commitText(text, newCursorPosition)
+        onKeyEventUpListener?.invoke(text)
+        // 返回 true 表示已处理，此时绑定的控件不会在回调 onTextChanged 等方法
+        return true
     }
 
 }

@@ -9,11 +9,16 @@
 
 
 ## 预览
-| box模式 | line模式 |
-| :--: | :----: |
+
+|           box模式           |          box模式        |
+|:-------------------------:|:---------------------:|
 | ![](./screenshots/p1.gif) | ![](./screenshots/p2.gif) |
-| **box无边框** | **字符回显** |
+|        **box无边框**         |    **字符回显**     |
 | ![](./screenshots/p3.gif) | ![](./screenshots/p4.gif) |
+|        **line模式**         |       **line模式**      |
+| ![](./screenshots/p5.gif) | ![](./screenshots/p6.gif) |
+|        **自动切换焦点**         |                       |
+| ![](./screenshots/p7.gif) |                       |
 
 
 
@@ -30,7 +35,7 @@ allprojects {
 2.  添加依赖
 ```groovy
 dependencies {
-    implementation 'com.github.viifo:LatticeEditText:1.0.0'
+    implementation 'com.github.viifo:LatticeEditText:1.0.1'
 }
 ```
 
@@ -79,31 +84,34 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 ## 属性表
 
-|             name           |  format   |  description  |
-| :------------------------: | :-------: | :-----------: |
-| android:background         | color     | 背景色         |
-| android:textSize           | dimension | 文字大小       |
-| android:textColor          | color     | 文字颜色       |
-| android:text               | string    | 输入框内容     |
-| android:layout_margin      | dimension | 外边距         |
-| android:layout_marginLeft  | dimension | 左外边距       |
-| android:layout_marginTop   | dimension | 上外边距       |
-| android:layout_marginRight | dimension | 右外边距       |
-| android:layout_marginBottom| dimension | 下外边距       |
-| android:padding            | dimension | 内边距         |
-| android:paddingLeft        | dimension | 左内边距       |
-| android:paddingTop         | dimension | 上内边距       |
-| input_mode                 | enum      | 输入框样式，参考输入框样式表 |
-| size                       | integer   | 输入框个数     |
-| input_width                | dimension | 单个输入框宽度 |
-| input_height               | dimension | 单个输入框高度 |
-| border_radius              | dimension | 边框半径      |
-| border_width               | dimension | 边框宽度      |
-| border_color               | color     | 边框颜色      |
-| cursor_width               | dimension | 光标宽度      |
-| cursor_height              | dimension | 光标高度      |
-| cursor_color               | color     | 光标颜色      |
-| replace_text               | string    | 回显字符      |
+|            name             |  format   |                 description                  |
+|:---------------------------:|:---------:|:--------------------------------------------:|
+|     android:background      |   color   |                     背景色                      |
+|       android:content       |  string   |                    输入框内容                     |
+|    android:layout_margin    | dimension |                     外边距                      |
+|  android:layout_marginLeft  | dimension |                     左外边距                     |
+|  android:layout_marginTop   | dimension |                     上外边距                     |
+| android:layout_marginRight  | dimension |                     右外边距                     |
+| android:layout_marginBottom | dimension |                     下外边距                     |
+|          text_size          | dimension |                     文字大小                     |
+|         text_color          |   color   |                     文字颜色                     |
+|         input_mode          |   enum    |                输入框样式，参考输入框样式表                |
+|            size             |  integer  |                    输入框个数                     |
+|         input_width         | dimension |                   单个输入框宽度                    |
+|        input_height         | dimension |                   单个输入框高度                    |
+|        border_radius        | dimension |                     边框半径                     |
+|        border_width         | dimension |                     边框宽度                     |
+|        border_color         |   color   |                     边框颜色                     |
+|        replace_text         |  string   |                     回显字符                     |
+|         cursor_mode         |   enum    |                 光标样式，参考光标样式表                 |
+|         show_cursor         |  boolean  |                是否显示光标，默认true                 |
+|        cursor_width         | dimension |                     光标宽度                     |
+|        cursor_height        | dimension |             光标高度，光标模式为 line 时有效              |
+|        cursor_color         |   color   |                     光标颜色                     |
+|      cursor_background      |   color   |                    光标背景色                     |
+|     cursor_orientation      |   enum    | 光标模式为 line 时有效, horizontal - 0, vertical = 1 |
+> 注：当 cursor_orientation = horizontal 时，必须满足 input_mode = line & cursor_mode = line
+
 
 
 
@@ -112,6 +120,15 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 | :------: | :-----------: |
 | box      | 盒子模式       |
 | line     | 下划线模式     |
+
+
+
+## 光标样式表
+
+|   name   | description |
+| :------: |:-----------:|
+| box      |    盒子模式     |
+| line     |  下划线或竖线模式   |
 
 
 
