@@ -23,11 +23,11 @@ class LatticeEditText @JvmOverloads constructor(
     var textChangeListener: ((String?) -> Unit)? = null
 
     /** 输入的文本内容 */
-    private var mContent: String = ""
+    internal var mContent: String = ""
     /** 回显字符 */
     private var mReplaceText: String? = null
     /** 可输入字符数 */
-    private var mSize = 0
+    internal var mSize = 0
     /** 每个输入框的宽度 */
     private var mWide = 0f
     /** 每个输入框的高度 */
@@ -39,7 +39,7 @@ class LatticeEditText @JvmOverloads constructor(
     private var mBorderRadius = 0f
     private var mBorderWidth = 0f
     private var mBorderColor = 0
-    private var mInputMode = 0
+    internal var mInputMode = 0
     private val mBorderRectList: MutableList<RectF> = ArrayList()
     /** 背景 */
     private val mBackgroundPaint: Paint = Paint()
@@ -51,18 +51,18 @@ class LatticeEditText @JvmOverloads constructor(
     /** 光标 */
     private val mCursorPaint: Paint by lazy { Paint() }
     private val mCursorBackgroundPaint: Paint by lazy { Paint() }
-    private var mCursorMode = 1
+    internal var mCursorMode = 1
     private var mCursorColor = 0
     private var mCursorBackground = 0
-    private var mShowCursor = true
+    internal var mShowCursor = true
     private var mCursorWidth = 0f
     private var mCursorHeight = 0f
-    private var mCursorOrientation = 0
+    internal var mCursorOrientation = 0
     private var mCursorOffset = 0
     private var mCursorOffsetValue = 0
-    private var mSelection = 0
+    internal var mSelection = 0
     private var mIsTwink = false
-    private var mPrevRefreshTime: Long = 0
+    private var mCursorBlink: CursorBlink? = null
 
     /** kotlin 相关参数获取 */
     val content: String get() = mContent
@@ -167,7 +167,7 @@ class LatticeEditText @JvmOverloads constructor(
         mTextPaint.textAlign = Paint.Align.CENTER
         // 初始化光标偏移，避免光标遮挡文字
         mTextPaint.getTextBounds("A", 0, 1, mTextRect)
-        mCursorOffsetValue = (mTextRect.width() / 2 + context.resources.getDimension(R.dimen.latticeEditText_dp2)).toInt()
+        mCursorOffsetValue = (mTextRect.width() / 2 + resources.getDimension(R.dimen.latticeEditText_dp2)).toInt()
 
         // 初始化文字绘制坐标
         // 配合 Paint.Align.CENTER 实现水平居中
@@ -244,7 +244,7 @@ class LatticeEditText @JvmOverloads constructor(
         // 绘制 box 光标
         drawBoxCursor(canvas)
 
-        // 绘制文字, 由于每个字符大小可能不一致，所以需要每个字符都进行测量
+        // 绘制文字
         // mSize.coerceAtMost(mContent.length) 保险措施，避免 mInputRectList 数组越界
         for (i in 0 until mSize.coerceAtMost(mContent.length)) {
             canvas.drawText(
@@ -260,61 +260,87 @@ class LatticeEditText @JvmOverloads constructor(
     }
 
     /**
-     * 绘制 box 模式光标, 即盒子背景，需在绘制文字前绘制
+     * 绘制 box 模式光标, 即盒子背景及边框，需在绘制文字前绘制
      * @param canvas
      */
     private fun drawBoxCursor(canvas: Canvas) {
-        if (mShowCursor && isFocused && mCursorMode == MODE_CURSOR_BOX && mSelection < mSize) {
+        if (mCursorMode == MODE_CURSOR_BOX && shouldDrawCursor()) {
             canvas.drawRoundRect(mInputRectList[mSelection], mBorderRadius, mBorderRadius, mCursorBackgroundPaint)
             canvas.drawRoundRect(mBorderRectList[mSelection], mBorderRadius, mBorderRadius, mCursorPaint)
         }
     }
 
     /**
-     * 绘制 line 模式光标, 即闪烁竖线，需在绘制文字后绘制光标
+     * 绘制 line 模式光标
      * @param canvas
      */
     private fun drawLineCursor(canvas: Canvas) {
-        if (mShowCursor && isFocused && mCursorMode == MODE_CURSOR_LINE) {
-            if (mInputMode == MODE_INPUT_LINE && mCursorOrientation == ORIENTATION_HORIZONTAL && mSelection < mSize) {
-                // 横线光标
+        if (mCursorMode == MODE_CURSOR_LINE && shouldDrawCursor()) {
+            if (mCursorOrientation == ORIENTATION_HORIZONTAL && mInputMode == MODE_INPUT_LINE) {
+                // 绘制水平下划线光标
                 canvas.drawRoundRect(mBorderRectList[mSelection], mBorderRadius, mBorderRadius, mCursorPaint)
             } else {
-                // 竖线光标
-                if (mIsTwink && mSelection < mSize) {
-                    val x = mInputRectList[mSelection].left + mWide / 2 + mCursorOffset
-                    canvas.drawLine(
-                        x,
-                        mInputRectList[mSelection].top + (mHigh - mCursorHeight) / 2,
-                        x,
-                        mInputRectList[mSelection].top + mHigh - (mHigh - mCursorHeight) / 2, mCursorPaint
-                    )
-                }
-                // 间隔刷新光标
-                if (System.currentTimeMillis() - mPrevRefreshTime >= defaultRefreshTime) {
-                    mPrevRefreshTime = System.currentTimeMillis()
-                    mIsTwink = !mIsTwink
-                }
-                // 间隔 500ms 重绘
-                postInvalidateDelayed(500)
+                // 绘制竖直光标。 mIsTwink = true 时绘制光标，mIsTwink = false 时擦除光标 (使用背景色覆盖)
+                val x = mInputRectList[mSelection].left + mWide / 2f + mCursorOffset
+                canvas.drawLine(
+                    x,
+                    mInputRectList[mSelection].top + (mHigh - mCursorHeight) / 2f,
+                    x,
+                    mInputRectList[mSelection].top + mHigh - (mHigh - mCursorHeight) / 2f,
+                    if (mIsTwink) mCursorPaint else mBackgroundPaint
+                )
+                mIsTwink = !mIsTwink
             }
         }
     }
 
     /**
-     * 删除已输入的文本内容
+     * 绘制竖直闪烁光标
      */
-    private fun deleteText() {
-        mContent.takeIf { it.isNotEmpty() }?.let {
-            // 依次删除最后一位字符
-            mContent = it.substring(0, it.length - 1)
-            // 更新光标位置
-            mSelection = mContent.length
-            // 设置光标偏移，光标显示在输入框中间
-            mCursorOffset = 0
-            postInvalidate()
-            textChangeListener?.invoke(mContent)
+    internal fun drawBlinkCursor() {
+        val left = mInputRectList[mSelection].left + mWide / 2f + mCursorOffset
+        val top = mInputRectList[mSelection].top + (mHigh - mCursorHeight) / 2f
+        val right = left + mCursorWidth
+        val bottom = mInputRectList[mSelection].top + mHigh - (mHigh - mCursorHeight) / 2f
+        // 更新光标区域
+        postInvalidate(left.toInt(), top.toInt(),right.toInt(),bottom.toInt())
+    }
+
+    private fun makeBlink() {
+        if (shouldBlink()) {
+            mCursorBlink?.let {
+                it.cancel()
+                removeCallbacks(it)
+            }
+            mCursorBlink = CursorBlink(this)
+            postDelayed(mCursorBlink, BLINK.toLong())
+        } else {
+            mCursorBlink?.let {
+                it.cancel()
+                removeCallbacks(it)
+            }
         }
+    }
+
+    /**
+     * 是否应该绘制光标
+     * @return Boolean
+     */
+    private fun shouldDrawCursor(): Boolean {
+        return (mShowCursor && isFocused && mSelection < mSize)
+    }
+
+    /**
+     * 是否应该绘制闪烁光标
+     * @return Boolean
+     */
+    internal fun shouldBlink(): Boolean {
+        return (mShowCursor
+                && isFocused
+                && mCursorMode == MODE_CURSOR_LINE
+                && mSelection < mSize
+                && (mCursorOrientation == ORIENTATION_VERTICAL
+                || mInputMode != MODE_INPUT_LINE))
     }
 
     /**
@@ -349,11 +375,16 @@ class LatticeEditText @JvmOverloads constructor(
         return super.onTouchEvent(event)
     }
 
+    override fun onFocusChanged(focused: Boolean, direction: Int, previouslyFocusedRect: Rect?) {
+        super.onFocusChanged(focused, direction, previouslyFocusedRect)
+        makeBlink()
+    }
+
     override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
         // 文本删除监听
         return LatticeEditTextInputConnection(super.onCreateInputConnection(outAttrs), true).also {
             it.setTarget(super.onCreateInputConnection(outAttrs))
-            it.onKeyDeletedDownListener = { deleteText() }
+            it.onKeyDeletedDownListener = { removeChar() }
             it.onKeyEventUpListener = { text -> appendChar(text) }
         }
     }
@@ -363,7 +394,7 @@ class LatticeEditText @JvmOverloads constructor(
      */
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
         return if (event != null && event.keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
-            deleteText()
+            removeChar()
             true
         } else {
             super.onKeyDown(keyCode, event)
@@ -395,6 +426,22 @@ class LatticeEditText @JvmOverloads constructor(
     }
 
     /**
+     * 删除文本末尾字符
+     */
+    fun removeChar() {
+        mContent.takeIf { it.isNotEmpty() }?.let {
+            // 依次删除最后一位字符
+            mContent = it.substring(0, it.length - 1)
+            // 更新光标位置
+            mSelection = mContent.length
+            // 设置光标偏移，光标显示在输入框中间
+            mCursorOffset = 0
+            postInvalidate()
+            textChangeListener?.invoke(mContent)
+        }
+    }
+
+    /**
      * 添加一个字符到输入框
      * @param text - CharSequence
      */
@@ -405,10 +452,14 @@ class LatticeEditText @JvmOverloads constructor(
                 mContent += it
                 mSelection += it.length
                 postInvalidate()
+                textChangeListener?.invoke(mContent)
             } else if (length < mSize) {
                 mContent += it.substring(0, mSize - length)
                 mSelection += mSize - length
                 postInvalidate()
+                textChangeListener?.invoke(mContent)
+            } else {
+                // do nothing
             }
         }
     }
@@ -431,9 +482,18 @@ class LatticeEditText @JvmOverloads constructor(
         mReplaceText = text?.takeIf { it.isNotEmpty() }?.substring(0, 1)
     }
 
+    /**
+     * 是否显示焦点
+     */
+    fun isCursorVisible(visible: Boolean) {
+        mShowCursor = visible
+        postInvalidate()
+        makeBlink()
+    }
+
     companion object {
         /** 光标刷新时间  */
-        private const val defaultRefreshTime = 500
+        const val BLINK = 500
         /** 输入模式 */
         const val MODE_INPUT_BOX = 0
         const val MODE_INPUT_LINE = 1

@@ -25,5 +25,10 @@ class DemoActivity : AppCompatActivity() {
         findViewById<Button>(R.id.btn_get).setOnClickListener {
             findViewById<TextView>(R.id.tv_text).text = latticeEditText.content
         }
+
+        GlobalScope.launch {
+            delay(6100)
+            latticeEditText.isCursorVisible(false)
+        }
     }
 }

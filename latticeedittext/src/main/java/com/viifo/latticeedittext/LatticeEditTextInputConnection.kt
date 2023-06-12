@@ -5,7 +5,7 @@ import android.view.inputmethod.InputConnection
 import android.view.inputmethod.InputConnectionWrapper
 
 /**
- * 删除事件监听
+ * 键盘事件监听
  * @author Viifo
  */
 class LatticeEditTextInputConnection (target: InputConnection?, mutable: Boolean)
@@ -51,6 +51,14 @@ class LatticeEditTextInputConnection (target: InputConnection?, mutable: Boolean
     override fun sendKeyEvent(event: KeyEvent): Boolean {
         return if (event.keyCode == KeyEvent.KEYCODE_DEL && event.action == KeyEvent.ACTION_DOWN) {
             onKeyDeletedDownListener?.invoke()
+            true
+        } else if(
+            event.action == KeyEvent.ACTION_UP
+            && ((event.unicodeChar >= '0'.code && event.unicodeChar <= '9'.code)
+                    || (event.unicodeChar >= 'A'.code && event.unicodeChar <= 'Z'.code)
+                    || (event.unicodeChar >= 'a'.code && event.unicodeChar <= 'z'.code))
+        ) {
+            onKeyEventUpListener?.invoke(event.unicodeChar.toChar().toString())
             true
         } else super.sendKeyEvent(event)
     }

@@ -39,7 +39,7 @@ allprojects {
 2.  添加依赖
 ```groovy
 dependencies {
-    implementation 'com.github.viifo:LatticeEditText:1.0.2'
+    implementation 'com.github.viifo:LatticeEditText:1.0.3'
 }
 ```
 
@@ -146,9 +146,13 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 ## 更新日志
 
-* 1.0.1
-  1. bug 修复
-  2. 新增光标模式
+* 1.0.3
+  1. bug 修复。
+  2. 竖直闪烁光标实现优化。
+  3. 开放部分方法，便于联动自定义键盘。
+* 1.0.2
+  1. bug 修复。
+  2. 新增光标模式。
 * 1.0.0
 
 

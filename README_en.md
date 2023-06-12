@@ -39,7 +39,7 @@ allprojects {
 2.  Add the dependency:
 ```groovy
 dependencies {
-    implementation 'com.github.viifo:LatticeEditText:1.0.2'
+    implementation 'com.github.viifo:LatticeEditText:1.0.3'
 }
 ```
 
@@ -148,9 +148,13 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 ## Update log
 
-* 1.0.1
-    1. bug fixes
-    2. added cursor mode
+* 1.0.3
+  1. bug fixes.
+  2. blinking cursor optimized.
+  3. Open some methods, easy to link custom keyboard.
+* 1.0.2
+  1. bug fixes.
+  2. added cursor mode.
 * 1.0.0
 
 
