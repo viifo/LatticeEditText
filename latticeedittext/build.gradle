@@ -40,7 +40,7 @@ afterEvaluate {
                 from components.release
                 groupId = 'com.github.viifo'
                 artifactId = 'LatticeEditText'
-                version = '1.0.3'
+                version = '1.0.4'
             }
         }
     }

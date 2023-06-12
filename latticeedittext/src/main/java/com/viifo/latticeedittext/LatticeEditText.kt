@@ -298,12 +298,14 @@ class LatticeEditText @JvmOverloads constructor(
      * 绘制竖直闪烁光标
      */
     internal fun drawBlinkCursor() {
-        val left = mInputRectList[mSelection].left + mWide / 2f + mCursorOffset
-        val top = mInputRectList[mSelection].top + (mHigh - mCursorHeight) / 2f
-        val right = left + mCursorWidth
-        val bottom = mInputRectList[mSelection].top + mHigh - (mHigh - mCursorHeight) / 2f
-        // 更新光标区域
-        postInvalidate(left.toInt(), top.toInt(),right.toInt(),bottom.toInt())
+        if (mSelection < mSize) {
+            val left = mInputRectList[mSelection].left + mWide / 2f + mCursorOffset
+            val top = mInputRectList[mSelection].top + (mHigh - mCursorHeight) / 2f
+            val right = left + mCursorWidth
+            val bottom = mInputRectList[mSelection].top + mHigh - (mHigh - mCursorHeight) / 2f
+            // 更新光标区域
+            postInvalidate(left.toInt(), top.toInt(),right.toInt(),bottom.toInt())
+        }
     }
 
     private fun makeBlink() {
@@ -338,7 +340,6 @@ class LatticeEditText @JvmOverloads constructor(
         return (mShowCursor
                 && isFocused
                 && mCursorMode == MODE_CURSOR_LINE
-                && mSelection < mSize
                 && (mCursorOrientation == ORIENTATION_VERTICAL
                 || mInputMode != MODE_INPUT_LINE))
     }
@@ -450,12 +451,22 @@ class LatticeEditText @JvmOverloads constructor(
             val length = mContent.length
             if (length + it.length <= mSize) {
                 mContent += it
-                mSelection += it.length
+                if (mSelection + it.length == mSize) {
+                    mSelection = mSize
+                    // 设置光标偏移，避免光标遮挡文字
+                    mCursorOffset = mCursorOffsetValue
+                } else {
+                    mSelection += it.length
+                    // 设置光标偏移，光标显示在输入框中间
+                    mCursorOffset = 0
+                }
                 postInvalidate()
                 textChangeListener?.invoke(mContent)
             } else if (length < mSize) {
                 mContent += it.substring(0, mSize - length)
-                mSelection += mSize - length
+                mSelection = mSize
+                // 设置光标偏移，避免光标遮挡文字
+                mCursorOffset = mCursorOffsetValue
                 postInvalidate()
                 textChangeListener?.invoke(mContent)
             } else {

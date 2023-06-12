@@ -39,7 +39,7 @@ allprojects {
 2.  添加依赖
 ```groovy
 dependencies {
-    implementation 'com.github.viifo:LatticeEditText:1.0.3'
+    implementation 'com.github.viifo:LatticeEditText:1.0.4'
 }
 ```
 
@@ -146,6 +146,8 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 ## 更新日志
 
+* 1.0.4
+  1. bug 修复：输入完成后回删光标显示异常。
 * 1.0.3
   1. bug 修复。
   2. 竖直闪烁光标实现优化。

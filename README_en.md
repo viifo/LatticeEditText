@@ -39,7 +39,7 @@ allprojects {
 2.  Add the dependency:
 ```groovy
 dependencies {
-    implementation 'com.github.viifo:LatticeEditText:1.0.3'
+    implementation 'com.github.viifo:LatticeEditText:1.0.4'
 }
 ```
 
@@ -148,6 +148,8 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 ## Update log
 
+* 1.0.4
+  1. bug fixes: After the input is completed, the delete cursor displays abnormally.
 * 1.0.3
   1. bug fixes.
   2. blinking cursor optimized.

@@ -26,9 +26,9 @@ class DemoActivity : AppCompatActivity() {
             findViewById<TextView>(R.id.tv_text).text = latticeEditText.content
         }
 
-        GlobalScope.launch {
-            delay(6100)
-            latticeEditText.isCursorVisible(false)
-        }
+//        GlobalScope.launch {
+//            delay(6100)
+//            latticeEditText.isCursorVisible(false)
+//        }
     }
 }
