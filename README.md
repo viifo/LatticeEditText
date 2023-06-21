@@ -2,7 +2,7 @@
 
 [![](https://jitpack.io/v/viifo/LatticeEditText.svg)](https://jitpack.io/#viifo/LatticeEditText)
 
-[中文](https://github.com/viifo/LatticeEditText/blob/master/README.md) | [English](https://github.com/viifo/LatticeEditText/blob/master/README_en.md)
+[中文](https://gitee.com/viifo/LatticeEditText/blob/master/README.md) | [English](https://gitee.com/viifo/LatticeEditText/blob/master/README_en.md)
 
 一个格子输入框，可用于验证码或密码输入。
 
