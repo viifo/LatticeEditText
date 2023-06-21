@@ -2,7 +2,7 @@
 
 [![](https://jitpack.io/v/viifo/LatticeEditText.svg)](https://jitpack.io/#viifo/LatticeEditText)
 
-[中文](https://gitee.com/viifo/LatticeEditText/blob/master/README.md) | [English](https://gitee.com/viifo/LatticeEditText/blob/master/README_en.md)
+[//]: # ([中文]&#40;https://gitee.com/viifo/LatticeEditText/blob/master/README.md&#41; | [English]&#40;https://gitee.com/viifo/LatticeEditText/blob/master/README_en.md&#41;)
 
 A lattice input box can be used for verification code or password input.
 
