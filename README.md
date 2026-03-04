@@ -146,6 +146,8 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 ## 更新日志
 
+* 1.0.5
+  1. 支持系统触发的验证码自动填充。
 * 1.0.4
   1. bug 修复：输入完成后回删光标显示异常。
 * 1.0.3

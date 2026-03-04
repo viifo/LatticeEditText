@@ -18,7 +18,7 @@
         app:text_size="18sp"
         app:text_color="#ff0000"
         app:border_radius="10dp"
-        app:cursor_mode="box"
+        app:cursor_mode="line"
         app:cursor_height="15dp"
         app:cursor_width="1.5dp"
         app:cursor_color="#00AA09"

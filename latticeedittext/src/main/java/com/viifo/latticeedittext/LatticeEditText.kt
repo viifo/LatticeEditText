@@ -2,14 +2,22 @@ package com.viifo.latticeedittext
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Point
+import android.graphics.Rect
+import android.graphics.RectF
+import android.os.Build
 import android.util.AttributeSet
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.autofill.AutofillValue
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputConnection
-import androidx.appcompat.widget.AppCompatTextView
+import androidx.appcompat.widget.AppCompatEditText
 import androidx.core.content.ContextCompat
+import androidx.core.content.withStyledAttributes
+import androidx.core.widget.doOnTextChanged
 
 
 /**
@@ -18,12 +26,10 @@ import androidx.core.content.ContextCompat
 class LatticeEditText @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null
-) : AppCompatTextView(context, attrs) {
+) : AppCompatEditText(context, attrs) {
 
     var textChangeListener: ((String?) -> Unit)? = null
 
-    /** 输入的文本内容 */
-    internal var mContent: String = ""
     /** 回显字符 */
     private var mReplaceText: String? = null
     /** 可输入字符数 */
@@ -64,49 +70,88 @@ class LatticeEditText @JvmOverloads constructor(
     private var mIsTwink = false
     private var mCursorBlink: CursorBlink? = null
 
-    /** kotlin 相关参数获取 */
-    val content: String get() = mContent
+    private var prevEventX = 0f
+    private var prevEventY = 0f
+
+    private val content: String get() = text?.toString().orEmpty()
 
     /**
      * 初始化属性参数
      * @param context
      * @param attrs
      */
-    @SuppressLint("CustomViewStyleable")
     private fun initAttrs(context: Context, attrs: AttributeSet?) {
-        context.obtainStyledAttributes(attrs, R.styleable.LatticeEditText).apply {
+        context.withStyledAttributes(attrs, R.styleable.LatticeEditText) {
             // background
-            val backgroundColor = getColor(R.styleable.LatticeEditText_android_background, ContextCompat.getColor(context, R.color.latticeEditText_background))
+            val backgroundColor = getColor(
+                R.styleable.LatticeEditText_android_background,
+                ContextCompat.getColor(context, R.color.latticeEditText_background)
+            )
             // 每个字符框占的宽度 & 高度
             mSize = getInteger(R.styleable.LatticeEditText_size, 4)
-            mWide = getDimension(R.styleable.LatticeEditText_input_width, context.resources.getDimension(R.dimen.latticeEditText_dp36))
-            mHigh = getDimension(R.styleable.LatticeEditText_input_height, context.resources.getDimension(R.dimen.latticeEditText_dp36))
+            mWide = getDimension(
+                R.styleable.LatticeEditText_input_width,
+                context.resources.getDimension(R.dimen.latticeEditText_dp36)
+            )
+            mHigh = getDimension(
+                R.styleable.LatticeEditText_input_height,
+                context.resources.getDimension(R.dimen.latticeEditText_dp36)
+            )
             // 外边距
-            val margin = getDimension(R.styleable.LatticeEditText_android_layout_margin, context.resources.getDimension(R.dimen.latticeEditText_dp4))
+            val margin = getDimension(
+                R.styleable.LatticeEditText_android_layout_margin,
+                context.resources.getDimension(R.dimen.latticeEditText_dp4)
+            )
             mMarginRect = Rect(
                 getDimension(R.styleable.LatticeEditText_android_layout_marginLeft, margin).toInt(),
                 getDimension(R.styleable.LatticeEditText_android_layout_marginTop, margin).toInt(),
-                getDimension(R.styleable.LatticeEditText_android_layout_marginRight, margin).toInt(),
-                getDimension(R.styleable.LatticeEditText_android_layout_marginBottom, margin).toInt()
+                getDimension(
+                    R.styleable.LatticeEditText_android_layout_marginRight,
+                    margin
+                ).toInt(),
+                getDimension(
+                    R.styleable.LatticeEditText_android_layout_marginBottom,
+                    margin
+                ).toInt()
             )
             // text
-            val textSize = getDimension(R.styleable.LatticeEditText_text_size, context.resources.getDimension(R.dimen.latticeEditText_sp14))
-            val textColor = getColor(R.styleable.LatticeEditText_text_color, ContextCompat.getColor(context, R.color.latticeEditText_textColor))
+            val textSize = getDimension(
+                R.styleable.LatticeEditText_text_size,
+                context.resources.getDimension(R.dimen.latticeEditText_sp14)
+            )
+            val textColor = getColor(
+                R.styleable.LatticeEditText_text_color,
+                ContextCompat.getColor(context, R.color.latticeEditText_textColor)
+            )
             val text = getString(R.styleable.LatticeEditText_android_content) ?: ""
             val repText = getString(R.styleable.LatticeEditText_replace_text)
             // border
-            mBorderColor = getColor(R.styleable.LatticeEditText_border_color, ContextCompat.getColor(context, R.color.latticeEditText_borderColor))
-            mBorderWidth = getDimension(R.styleable.LatticeEditText_border_width, context.resources.getDimension(R.dimen.latticeEditText_dp1))
+            mBorderColor = getColor(
+                R.styleable.LatticeEditText_border_color,
+                ContextCompat.getColor(context, R.color.latticeEditText_borderColor)
+            )
+            mBorderWidth = getDimension(
+                R.styleable.LatticeEditText_border_width,
+                context.resources.getDimension(R.dimen.latticeEditText_dp1)
+            )
             mBorderRadius = getDimension(R.styleable.LatticeEditText_border_radius, 0f)
             mInputMode = getInteger(R.styleable.LatticeEditText_input_mode, 0)
             // cursor
             mCursorMode = getInteger(R.styleable.LatticeEditText_cursor_mode, 1)
-            mCursorColor = getColor(R.styleable.LatticeEditText_cursor_color, ContextCompat.getColor(context, R.color.latticeEditText_cursorColor))
-            mCursorBackground = getColor(R.styleable.LatticeEditText_cursor_background, backgroundColor)
+            mCursorColor = getColor(
+                R.styleable.LatticeEditText_cursor_color,
+                ContextCompat.getColor(context, R.color.latticeEditText_cursorColor)
+            )
+            mCursorBackground =
+                getColor(R.styleable.LatticeEditText_cursor_background, backgroundColor)
             mShowCursor = getBoolean(R.styleable.LatticeEditText_show_cursor, true)
-            mCursorWidth = getDimension(R.styleable.LatticeEditText_cursor_width, resources.getDimension(R.dimen.latticeEditText_dp1))
+            mCursorWidth = getDimension(
+                R.styleable.LatticeEditText_cursor_width,
+                resources.getDimension(R.dimen.latticeEditText_dp1)
+            )
             mCursorHeight = getDimension(R.styleable.LatticeEditText_cursor_height, mHigh / 2)
-            mCursorOrientation = getInteger(R.styleable.LatticeEditText_cursor_orientation, ORIENTATION_VERTICAL)
+            mCursorOrientation =
+                getInteger(R.styleable.LatticeEditText_cursor_orientation, ORIENTATION_VERTICAL)
 
             // 边框画笔
             initBorderPaint()
@@ -122,7 +167,7 @@ class LatticeEditText @JvmOverloads constructor(
             setContent(text)
             // 设置回显字符
             setEchoChar(repText)
-        }.recycle()
+        }
     }
 
     /**
@@ -136,6 +181,24 @@ class LatticeEditText @JvmOverloads constructor(
         // 不显示原光标
         isCursorVisible = false
         background = null
+        // 设置自动填充重要性等级
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            importantForAutofill = IMPORTANT_FOR_AUTOFILL_YES
+        }
+        // 监听文本变化
+        doOnTextChanged { text, _, _, _ ->
+            val length = text?.length ?: 0
+            if (length > mSize) {
+                setContent(text?.toString())
+            } else {
+                // 设置光标位置
+                mSelection = if (length == mSize) mSize else length
+                setSelection(mSelection)
+                // 设置光标偏移，避免光标遮挡文字
+                mCursorOffset = if (length != mSize) 0 else mCursorOffsetValue
+                textChangeListener?.invoke(text?.toString().orEmpty())
+            }
+        }
     }
 
     /**
@@ -245,10 +308,10 @@ class LatticeEditText @JvmOverloads constructor(
         drawBoxCursor(canvas)
 
         // 绘制文字
-        // mSize.coerceAtMost(mContent.length) 保险措施，避免 mInputRectList 数组越界
-        for (i in 0 until mSize.coerceAtMost(mContent.length)) {
+        // mSize.coerceAtMost(content.length) 保险措施，避免 mInputRectList 数组越界
+        for (i in 0 until mSize.coerceAtMost(content.length)) {
             canvas.drawText(
-                mReplaceText ?: mContent[i].toString(),
+                mReplaceText ?: content[i].toString(),
                 mInputRectList[i].left + mTextPoint.x,
                 mInputRectList[i].top + mTextPoint.y,
                 mTextPaint
@@ -351,28 +414,33 @@ class LatticeEditText @JvmOverloads constructor(
     private fun clickItem(index: Int) {
         // 选中输入位 | 选中最后一位
         if (index < mSize) {
-            val length = mContent.length
+            val length = content.length
             // 设置光标位置
-            mSelection = if (length == mSize) length -1 else length
+            mSelection = if (length == mSize) length - 1 else length
+            setSelection(mSelection)
             // 设置光标偏移，避免光标遮挡文字
             mCursorOffset = if (length != mSize) 0 else mCursorOffsetValue
-            invalidate()
+            postInvalidate()
         }
+    }
+
+    override fun performClick(): Boolean {
+        runCatching {
+            val index = (prevEventX / (mWide + mMarginRect.left + mMarginRect.right)).toInt()
+            clickItem(index)
+        }
+        return super.performClick()
+    }
+
+    override fun performLongClick(): Boolean {
+        // 不触发系统长按逻辑
+        return true
     }
 
     @SuppressLint("ClickableViewAccessibility")
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-                run {
-                    val index = (event.x / (mWide + mMarginRect.left + mMarginRect.right)).toInt()
-                    clickItem(index)
-                }
-            }
-            MotionEvent.ACTION_UP -> {
-                performClick()
-            }
-        }
+        prevEventX = event.x
+        prevEventY = event.y
         return super.onTouchEvent(event)
     }
 
@@ -409,6 +477,48 @@ class LatticeEditText @JvmOverloads constructor(
         return true
     }
 
+    override fun showContextMenu(): Boolean {
+        return false
+    }
+
+    override fun showContextMenu(x: Float, y: Float): Boolean {
+        return false
+    }
+
+    /**
+     * 自动填充类型
+     */
+    override fun getAutofillType(): Int {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isEnabled) {
+            AUTOFILL_TYPE_TEXT
+        } else {
+           super.getAutofillType()
+        }
+    }
+
+    /**
+     * 自动填充值
+     */
+    override fun getAutofillValue(): AutofillValue? {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && isEnabled) {
+            AutofillValue.forText(text)
+        } else {
+            super.getAutofillValue()
+        }
+    }
+
+    /**
+     * 自动填充
+     */
+    override fun autofill(value: AutofillValue?) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && value != null && value.isText) {
+            val content = value.textValue.toString()
+            setContent(content)
+        } else {
+            super.autofill(value)
+        }
+    }
+
     /**
      * 文本内容改变监听
      */
@@ -430,15 +540,9 @@ class LatticeEditText @JvmOverloads constructor(
      * 删除文本末尾字符
      */
     fun removeChar() {
-        mContent.takeIf { it.isNotEmpty() }?.let {
+        content.takeIf { it.isNotEmpty() }?.let {
             // 依次删除最后一位字符
-            mContent = it.substring(0, it.length - 1)
-            // 更新光标位置
-            mSelection = mContent.length
-            // 设置光标偏移，光标显示在输入框中间
-            mCursorOffset = 0
-            postInvalidate()
-            textChangeListener?.invoke(mContent)
+            super.setText(it.substring(0, it.length - 1))
         }
     }
 
@@ -448,27 +552,13 @@ class LatticeEditText @JvmOverloads constructor(
      */
     fun appendChar(text: CharSequence?) {
         text?.takeIf { it.isNotEmpty() }?.let {
-            val length = mContent.length
+            val length = content.length
             if (length + it.length <= mSize) {
-                mContent += it
-                if (mSelection + it.length == mSize) {
-                    mSelection = mSize
-                    // 设置光标偏移，避免光标遮挡文字
-                    mCursorOffset = mCursorOffsetValue
-                } else {
-                    mSelection += it.length
-                    // 设置光标偏移，光标显示在输入框中间
-                    mCursorOffset = 0
-                }
-                postInvalidate()
-                textChangeListener?.invoke(mContent)
+                val newContent = content + it
+                super.setText(newContent)
             } else if (length < mSize) {
-                mContent += it.substring(0, mSize - length)
-                mSelection = mSize
-                // 设置光标偏移，避免光标遮挡文字
-                mCursorOffset = mCursorOffsetValue
-                postInvalidate()
-                textChangeListener?.invoke(mContent)
+                val newContent = content + it.substring(0, mSize - length)
+                super.setText(newContent)
             } else {
                 // do nothing
             }
@@ -480,9 +570,10 @@ class LatticeEditText @JvmOverloads constructor(
      * @param text - 内容字符串
      */
     fun setContent(text: String?) {
-        mContent = text?.takeIf { it.isNotEmpty() }?.let {
+        val newContent = text?.takeIf { it.isNotEmpty() }?.let {
             if (it.length > mSize) it.substring(0, mSize) else it
         } ?: ""
+        super.setText(newContent)
     }
 
     /**

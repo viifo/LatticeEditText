@@ -148,6 +148,8 @@ latticeEditText.setOnTextChangeListener(new OnTextChangeListener() {
 
 ## Update log
 
+* 1.0.5
+  1. It supports automatic filling of CAPTCHAs triggered by the system.
 * 1.0.4
   1. bug fixes: After the input is completed, the delete cursor displays abnormally.
 * 1.0.3

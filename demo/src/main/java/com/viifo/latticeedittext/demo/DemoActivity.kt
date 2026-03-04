@@ -2,6 +2,7 @@ package com.viifo.latticeedittext.demo
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import com.viifo.latticeedittext.LatticeEditText
@@ -17,13 +18,13 @@ class DemoActivity : AppCompatActivity() {
 
         val latticeEditText = findViewById<LatticeEditText>(R.id.et_input)
         latticeEditText.textChangeListener = {
-            println("--> OnTextChangeListener： text = $it")
+            Log.e("DemoActivity", "OnTextChangeListener： text = $it")
         }
         latticeEditText.setOnTextChangeListener {
-            println("--> OnTextChangeListener： text = $it")
+            Log.e("DemoActivity", "OnTextChangeListener： text = $it")
         }
         findViewById<Button>(R.id.btn_get).setOnClickListener {
-            findViewById<TextView>(R.id.tv_text).text = latticeEditText.content
+            findViewById<TextView>(R.id.tv_text).text = latticeEditText.text
         }
 
 //        GlobalScope.launch {
